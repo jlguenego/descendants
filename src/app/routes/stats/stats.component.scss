@@ -1,4 +1,21 @@
+section {
+    text-align: center;
+}
+
+h2 {
+    padding-top: 2em;
+}
+
 .total {
     font-size: 2em;
     font-weight: bold;
+}
+
+.histo,
+.birth-place {
+    display: inline-block;
+    width: 20em;
+    max-width: 100%;
+    height: 20em;
+    background: #eee;
 }
