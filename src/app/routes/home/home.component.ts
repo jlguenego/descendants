@@ -20,6 +20,14 @@ export class HomeComponent implements OnInit {
     private sparql: SparqlService) { }
 
   ngOnInit() {
+    this.updateFilter();
+  }
+
+  submit() {
+    this.router.navigateByUrl('/stats');
+  }
+
+  updateFilter() {
     const text = 'Jean';
     this.sparql.query(`
     SELECT ?h ?hLabel ?hDescription
@@ -29,7 +37,7 @@ WHERE {
       ?h wdt:P31 wd:Q5.
       ?h wdt:P569 ?dob.
       ?h rdfs:label ?label.
-      FILTER(CONTAINS(?label, "${text}")).
+      FILTER(CONTAINS(?label, "${this.f.value.name}")).
       FILTER(LANG(?label) = "fr").
       FILTER(?dob < "1801-01-01"^^xsd:dateTime).
     }
@@ -41,10 +49,6 @@ WHERE {
       console.log('obj', obj);
       this.options = obj.results.bindings.map(result => result.hLabel.value);
     });
-  }
-
-  submit() {
-    this.router.navigateByUrl('/stats');
   }
 
 }
