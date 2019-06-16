@@ -2,7 +2,7 @@
   <h1>Choisis un personnage historique</h1>
   <!-- <app-photo-picker [list]="list"></app-photo-picker> -->
 
-  <form [formGroup]="f">
+  <form [formGroup]="f" (ngSubmit)="submit()">
     <div class="name">
       <mat-form-field>
         <input type="text" placeholder="Personnage historique" matInput formControlName="name" [matAutocomplete]="auto">

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -13,9 +14,13 @@ export class HomeComponent implements OnInit {
   });
 
   options = ['Saint-Louis', 'Clovis'];
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
+  }
+
+  submit() {
+    this.router.navigateByUrl('/stats');
   }
 
 }
