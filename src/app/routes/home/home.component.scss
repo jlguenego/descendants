@@ -1,0 +1,22 @@
+form {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 25em;
+    margin: 0 auto;
+
+    >div.name {
+        flex-grow: 1;
+        padding: 0 1em;
+    }
+
+    mat-form-field {
+        width: 100%;
+        max-width: 20em;
+    }
+
+   
+    
+}
