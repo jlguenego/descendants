@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SparqlService } from 'src/app/sparql.service';
 import { debounceTime } from 'rxjs/operators';
@@ -30,6 +30,13 @@ const getThumbnailUrl = url => {
   return `https://commons.wikimedia.org/w/thumb.php?width=320&f=${imageName}`;
 };
 
+const isWikiDataEntity = (control: AbstractControl): ValidationErrors => {
+  if (!control.value.id) {
+    return { hasNoId: true};
+  }
+  return null;
+};
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -46,7 +53,7 @@ export class HomeComponent implements OnInit {
       thumbnail: 'https://commons.wikimedia.org/w/thumb.php?width=160&f=Premier_sceau_de_majesté_de_Louis_IX_détouré.png',
       dob: '1214-05-02T00:00:00Z',
       dod: '1270-09-01T00:00:00Z',
-    }, Validators.required)
+    }, [Validators.required, isWikiDataEntity])
   });
 
   options: WikidataEntityOption[];
@@ -77,26 +84,27 @@ export class HomeComponent implements OnInit {
     console.log('pattern', pattern);
     this.sparql.query(`
     SELECT ?h ?hLabel ?hDescription ?nationalityLabel ?image ?dob ?dod
-    WHERE {
-      {
-        SELECT DISTINCT ?h ?label ?nationality ?image ?dob ?dod WHERE {
-          VALUES ?nationality { wd:Q70972 wd:Q142  }
-          ?h wdt:P31 wd:Q5.
-          ?h wdt:P27 ?nationality.
-          ?h wdt:P569 ?dob.
-          ?h rdfs:label ?label.
-          ?h wdt:P97 ?titreNoblesse.
-          ?h wdt:P18 ?image.
-          ?h wdt:P570 ?dod.
-          FILTER(CONTAINS(LCASE(?label), LCASE("${pattern}"))).
-          FILTER(LANG(?label) = "fr").
-          FILTER(?dob < "1950-01-01"^^xsd:dateTime).
-        }
-        LIMIT 7
-      }
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+WHERE {
+  {
+    SELECT ?h ?label ?nationality ?image (MIN(?birthday) AS ?dob) (MIN(?deathday) AS ?dod) WHERE {
+      VALUES ?nationality { wd:Q70972 wd:Q142 wd:Q31929 wd:Q146246 }
+      ?h wdt:P31 wd:Q5.
+      ?h wdt:P27 ?nationality.
+      ?h wdt:P569 ?birthday.
+      ?h rdfs:label ?label.
+      ?h wdt:P97 ?titreNoblesse.
+      ?h wdt:P18 ?image.
+      ?h wdt:P570 ?deathday.
+      FILTER(CONTAINS(LCASE(?label), LCASE("${pattern}"))).
+      FILTER(LANG(?label) = "fr").
+      FILTER(?deathday < "1950-01-01"^^xsd:dateTime).
     }
-    ORDER BY ?hLabel
+    GROUP BY ?h ?label ?nationality ?image
+    LIMIT 7
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+}
+ORDER BY ?hLabel
 `).subscribe(obj => {
       console.log('obj', obj);
       this.options = obj.results.bindings.map(result => {
