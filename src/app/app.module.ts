@@ -15,6 +15,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AncestorsComponent } from './routes/ancestors/ancestors.component';
 import { HttpClientModule } from '@angular/common/http';
 import { WidgetModule } from './widget/widget.module';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+
+registerLocaleData(localeFr, 'fr');
 
 @NgModule({
   declarations: [
