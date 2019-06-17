@@ -9,6 +9,7 @@ export class EmphaseComponent implements OnInit, OnChanges {
 
   prefix = '';
   suffix = '';
+  emphaseFromText = '';
 
   @Input() text = '';
   @Input() emphase = '';
@@ -24,8 +25,9 @@ export class EmphaseComponent implements OnInit, OnChanges {
       this.suffix = '';
       return;
     }
-    const index = this.text.indexOf(this.emphase);
+    const index = this.text.toLowerCase().indexOf(this.emphase.toLowerCase());
     this.prefix = this.text.substring(0, index);
+    this.emphaseFromText = this.text.substring(index, index + this.emphase.length);
     this.suffix = this.text.substring(index + this.emphase.length);
   }
 
