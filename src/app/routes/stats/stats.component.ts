@@ -14,6 +14,9 @@ export class StatsComponent implements OnInit {
   constructor(private entity: EntityService) { }
 
   ngOnInit() {
+    if (this.entity.getCurrent() === undefined) {
+      return;
+    }
     this.entity.get(this.entity.getCurrent()).subscribe(entity => {
       console.log('entity', entity);
       this.current = entity;
