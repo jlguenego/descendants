@@ -3,10 +3,7 @@ import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors }
 import { Router } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 import { FilterPeopleService, WikidataEntityOption } from 'src/app/filter-people.service';
-
-
-
-
+import { EntityService } from 'src/app/entity.service';
 
 const isWikiDataEntity = (control: AbstractControl): ValidationErrors => {
   if (!control.value.id) {
@@ -37,7 +34,9 @@ export class HomeComponent implements OnInit {
   options: WikidataEntityOption[];
   constructor(
     private router: Router,
-    private filterPeople: FilterPeopleService) { }
+    private filterPeople: FilterPeopleService,
+    private entity: EntityService
+    ) { }
 
   ngOnInit() {
     this.updateFilter(this.f.value.name);
@@ -45,9 +44,9 @@ export class HomeComponent implements OnInit {
     this.f.valueChanges.pipe(debounceTime(600)).subscribe(val => {
       console.log('val', val);
       this.updateFilter({ name: this.f.value.name });
-      // if (this.f.valid) {
-      //   this.
-      // }
+      if (this.f.valid) {
+        this.entity.get(this.f.value.id).subscribe(json => {});
+      }
     });
   }
 
