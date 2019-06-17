@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit {
           ?h wdt:P569 ?dob.
           ?h rdfs:label ?label.
           ?h wdt:P97 ?titreNoblesse.
-          FILTER(CONTAINS(?label, "${pattern}")).
+          FILTER(CONTAINS(LCASE(?label), LCASE("${pattern}"))).
           FILTER(LANG(?label) = "fr").
           FILTER(?dob < "1850-01-01"^^xsd:dateTime).
         }
