@@ -5,7 +5,8 @@
   <form [formGroup]="f" (ngSubmit)="submit()">
     <div class="name">
       <mat-form-field>
-        <input #input type="text" placeholder="Personnage historique" matInput formControlName="name" [matAutocomplete]="auto">
+        <input #input type="text" placeholder="Personnage historique" matInput formControlName="name"
+          [matAutocomplete]="auto">
       </mat-form-field>
     </div>
     <div class="name">
@@ -15,8 +16,12 @@
   </form>
 </section>
 
-<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" autoActiveFirstOption>
   <mat-option *ngFor="let option of options" [value]="option">
-    <span class="option"><span class="name"><app-emphase [text]="option.name" [emphase]="input.value"></app-emphase></span><span class="description">{{option.description}}</span></span> 
+    <span class="option"><span class="name">
+        <app-emphase [text]="option.name" [emphase]="input.value"></app-emphase>
+      </span><span class="description">{{option.description}}</span></span>
   </mat-option>
 </mat-autocomplete>
+
+{{f.value | json}}

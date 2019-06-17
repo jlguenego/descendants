@@ -6,7 +6,7 @@ import { debounceTime } from 'rxjs/operators';
 
 export interface WikidataEntityOption {
   name: string;
-  description: string;
+  description?: string;
 }
 
 
@@ -18,7 +18,7 @@ export interface WikidataEntityOption {
 export class HomeComponent implements OnInit {
 
   f = new FormGroup({
-    name: new FormControl('', Validators.required)
+    name: new FormControl({ name: 'Saint Louis', description: 'Roi de France' }, Validators.required)
   });
 
   options: WikidataEntityOption[] = [
@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
 
     this.f.valueChanges.pipe(debounceTime(600)).subscribe(val => {
       console.log('val', val);
-      this.updateFilter(this.f.value.name);
+      this.updateFilter({ name: this.f.value.name });
     });
   }
 
@@ -46,7 +46,10 @@ export class HomeComponent implements OnInit {
     return option.name;
   }
 
-  updateFilter(pattern) {
+  updateFilter(entity: WikidataEntityOption) {
+    console.log('updateFilter start with entity:', entity);
+    const pattern = entity.name;
+    console.log('pattern', pattern);
     this.sparql.query(`
     SELECT ?h ?hLabel ?hDescription ?nationalityLabel
     WHERE {
