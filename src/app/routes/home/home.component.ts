@@ -45,12 +45,14 @@ export class HomeComponent implements OnInit {
       console.log('val', val);
       this.updateFilter({ name: this.f.value.name });
       if (this.f.valid) {
-        this.entity.get(this.f.value.id).subscribe(json => {});
+        console.log('this.f.value.name.id', this.f.value.name.id);
+        this.entity.get(this.f.value.name.id).subscribe(json => {});
       }
     });
   }
 
   submit() {
+    this.entity.setCurrent(this.f.value.name.id);
     this.router.navigateByUrl('/stats');
   }
 

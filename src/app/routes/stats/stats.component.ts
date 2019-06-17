@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { EntityService } from 'src/app/entity.service';
 
 @Component({
   selector: 'app-stats',
@@ -7,11 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class StatsComponent implements OnInit {
   name = 'Saint-Louis';
-  total = 1234;
+  descendantCount = 0;
   survivors = 102;
-  constructor() { }
+  current: any = {};
+  constructor(private entity: EntityService) { }
 
   ngOnInit() {
+    this.entity.get(this.entity.getCurrent()).subscribe(entity => {
+      console.log('entity', entity);
+      this.current = entity;
+      this.descendantCount = entity.results.bindings[0].descendantCount.value;
+    });
   }
 
 }

@@ -1,11 +1,13 @@
 <section>
   <h1>Statistiques sur {{name}}</h1>
   <h2>Nombres de descendants</h2>
-  <p>{{name}} à <span class="total">{{total}}</span> descendants,
+  <p>{{name}} à <span class="total">{{descendantCount}}</span> descendants,
   </p>
   <p>
     dont <span class="total">{{survivors}}</span> actuellement en vie.
   </p>
+
+  {{ current | json }}
   <h2>Histogramme par siècle</h2>
   <div class="histo"></div>
   <h2>Lieux des naissances</h2>
