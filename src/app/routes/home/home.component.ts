@@ -2,6 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SparqlService } from 'src/app/sparql.service';
+import { debounceTime } from 'rxjs/operators';
+
+export interface WikidataEntityOption {
+  name: string;
+  description: string;
+}
+
 
 @Component({
   selector: 'app-home',
@@ -14,40 +21,62 @@ export class HomeComponent implements OnInit {
     name: new FormControl('', Validators.required)
   });
 
-  options = ['Saint-Louis', 'Clovis'];
+  options: WikidataEntityOption[] = [
+    { name: 'Saint Louis', description: 'Roi de France' },
+    { name: 'Clovis', description: 'Roi des Francs' },
+  ];
   constructor(
     private router: Router,
     private sparql: SparqlService) { }
 
   ngOnInit() {
-    this.updateFilter();
+    // this.updateFilter(this.f.value.name);
+
+    this.f.valueChanges.pipe(debounceTime(600)).subscribe(val => {
+      console.log('val', val);
+      this.updateFilter(this.f.value.name);
+    });
   }
 
   submit() {
     this.router.navigateByUrl('/stats');
   }
 
-  updateFilter() {
-    const text = 'Jean';
-    this.sparql.query(`
-    SELECT ?h ?hLabel ?hDescription
-WHERE {
-  {
-    SELECT DISTINCT ?h ?label WHERE {
-      ?h wdt:P31 wd:Q5.
-      ?h wdt:P569 ?dob.
-      ?h rdfs:label ?label.
-      FILTER(CONTAINS(?label, "${this.f.value.name}")).
-      FILTER(LANG(?label) = "fr").
-      FILTER(?dob < "1801-01-01"^^xsd:dateTime).
-    }
-    LIMIT 10
+  displayFn(option: WikidataEntityOption): string {
+    return option.name;
   }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
-}
+
+  updateFilter(pattern) {
+    this.sparql.query(`
+    SELECT ?h ?hLabel ?hDescription ?nationalityLabel
+    WHERE {
+      {
+        SELECT DISTINCT ?h ?label ?nationality WHERE {
+          VALUES ?nationality { wd:Q70972 wd:Q142  }
+          ?h wdt:P31 wd:Q5.
+          ?h wdt:P27 ?nationality.
+          ?h wdt:P569 ?dob.
+          ?h rdfs:label ?label.
+          FILTER(CONTAINS(?label, "${pattern}")).
+          FILTER(LANG(?label) = "fr").
+          FILTER(?dob < "1950-01-01"^^xsd:dateTime).
+        }
+        LIMIT 7
+      }
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+    }
+    ORDER BY ?hLabel
 `).subscribe(obj => {
       console.log('obj', obj);
-      this.options = obj.results.bindings.map(result => result.hLabel.value);
+      this.options = obj.results.bindings.map(result => {
+        if (!result.hDescription) {
+          return result.hLabel.value;
+        }
+        return {
+          name: result.hLabel.value,
+          description: result.hDescription.value,
+        };
+      });
     });
   }
 

@@ -17,6 +17,24 @@ form {
         max-width: 20em;
     }
 
-   
-    
+}
+
+span.option {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    line-height: 1em;
+    justify-content: space-between;
+
+    .name {
+        color: #3f51b5;
+    }
+
+    .description {
+        display: block;
+        font-size: 0.8em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
