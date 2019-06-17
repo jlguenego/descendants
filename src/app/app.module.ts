@@ -14,6 +14,7 @@ import { MaterialModule } from './material/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AncestorsComponent } from './routes/ancestors/ancestors.component';
 import { HttpClientModule } from '@angular/common/http';
+import { WidgetModule } from './widget/widget.module';
 
 @NgModule({
   declarations: [
@@ -30,9 +31,10 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     ReactiveFormsModule,
     HttpClientModule,
+    WidgetModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
