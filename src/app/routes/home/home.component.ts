@@ -44,13 +44,12 @@ export class HomeComponent implements OnInit {
       id: 'Q346',
       image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Premier_sceau_de_majesté_de_Louis_IX_détouré.png',
       thumbnail: 'https://commons.wikimedia.org/w/thumb.php?width=320&f=Premier_sceau_de_majesté_de_Louis_IX_détouré.png',
+      dob: '1214-05-02T00:00:00Z',
+      dod: '1270-09-01T00:00:00Z',
     }, Validators.required)
   });
 
-  options: WikidataEntityOption[] = [
-    { name: 'Saint Louis', description: 'Roi de France' },
-    { name: 'Clovis', description: 'Roi des Francs' },
-  ];
+  options: WikidataEntityOption[];
   constructor(
     private router: Router,
     private sparql: SparqlService) { }
@@ -117,6 +116,9 @@ export class HomeComponent implements OnInit {
   }
 
   getYear(dateStr: string) {
+    if (!dateStr) {
+      return '';
+    }
     return dateStr.substring(0, 4);
   }
 

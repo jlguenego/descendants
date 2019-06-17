@@ -1,10 +1,17 @@
 <section>
   <h1>Choisis un personnage historique</h1>
-  <!-- <app-photo-picker [list]="list"></app-photo-picker> -->
 
-  <div class="illustration">
+  <figure>
     <img *ngIf="f.value.name.thumbnail" [src]="f.value.name.thumbnail" [alt]="f.value.name.name">
-  </div>
+    <figcaption *ngIf="f.value.name.thumbnail">
+      <b>{{f.value.name.name}}</b>
+      <span>
+        [{{getYear(f.value.name.dob)}} - {{getYear(f.value.name.dod)}}]
+        {{f.value.name.description}}
+      </span>
+    </figcaption>
+  </figure>
+
 
   <form [formGroup]="f" (ngSubmit)="submit()">
     <div class="name">
@@ -24,8 +31,9 @@
   <mat-option *ngFor="let option of options" [value]="option">
     <span class="option"><span class="name">
         <app-emphase [text]="option.name" [emphase]="input.value"></app-emphase>
-      </span><span class="description">[{{getYear(option.dob)}} - {{getYear(option.dod)}}] {{option.description}}</span></span>
+      </span><span class="description">[{{getYear(option.dob)}} - {{getYear(option.dod)}}]
+        {{option.description}}</span></span>
   </mat-option>
 </mat-autocomplete>
 
-<!-- {{f.value | json}} -->
+{{f.value | json}}
