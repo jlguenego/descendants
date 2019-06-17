@@ -7,11 +7,11 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/cor
 })
 export class EmphaseComponent implements OnInit, OnChanges {
 
-  prefix: string;
-  suffix: string;
+  prefix = '';
+  suffix = '';
 
-  @Input() text: string;
-  @Input() emphase: string;
+  @Input() text = '';
+  @Input() emphase = '';
 
   constructor() { }
 
@@ -19,6 +19,11 @@ export class EmphaseComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (!this.text) {
+      this.prefix = '';
+      this.suffix = '';
+      return;
+    }
     const index = this.text.indexOf(this.emphase);
     this.prefix = this.text.substring(0, index);
     this.suffix = this.text.substring(index + this.emphase.length);

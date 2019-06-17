@@ -57,9 +57,10 @@ export class HomeComponent implements OnInit {
           ?h wdt:P27 ?nationality.
           ?h wdt:P569 ?dob.
           ?h rdfs:label ?label.
+          ?h wdt:P97 ?titreNoblesse.
           FILTER(CONTAINS(?label, "${pattern}")).
           FILTER(LANG(?label) = "fr").
-          FILTER(?dob < "1950-01-01"^^xsd:dateTime).
+          FILTER(?dob < "1850-01-01"^^xsd:dateTime).
         }
         LIMIT 7
       }
@@ -70,7 +71,10 @@ export class HomeComponent implements OnInit {
       console.log('obj', obj);
       this.options = obj.results.bindings.map(result => {
         if (!result.hDescription) {
-          return result.hLabel.value;
+          return {
+            name: result.hLabel.value,
+            description: '<aucune description>',
+          };
         }
         return {
           name: result.hLabel.value,
