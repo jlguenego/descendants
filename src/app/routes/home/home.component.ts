@@ -3,12 +3,30 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SparqlService } from 'src/app/sparql.service';
 import { debounceTime } from 'rxjs/operators';
+import { Md5 } from 'ts-md5/dist/md5';
 
 export interface WikidataEntityOption {
   name: string;
   description?: string;
+  id?: string;
+  image?: string;
+  thumbnail?: string;
 }
 
+const getEntityId = url => url.replace('http://www.wikidata.org/entity/', '');
+const getImageUrl = url => {
+  const str = decodeURIComponent(url.replace('http://commons.wikimedia.org/wiki/Special:FilePath/', ''));
+  const imageName = str.replace(/ /g, '_');
+  const checksum = Md5.hashStr(imageName) as string;
+  const a = checksum.substring(0, 1);
+  const ab = checksum.substring(0, 2);
+  return `https://upload.wikimedia.org/wikipedia/commons/${a}/${ab}/${imageName}`;
+};
+const getThumbnailUrl = url => {
+  const str = decodeURIComponent(url.replace('http://commons.wikimedia.org/wiki/Special:FilePath/', ''));
+  const imageName = str.replace(/ /g, '_');
+  return `https://commons.wikimedia.org/w/thumb.php?width=320&f=${imageName}`;
+};
 
 @Component({
   selector: 'app-home',
@@ -18,7 +36,13 @@ export interface WikidataEntityOption {
 export class HomeComponent implements OnInit {
 
   f = new FormGroup({
-    name: new FormControl({ name: 'Saint Louis', description: 'Roi de France' }, Validators.required)
+    name: new FormControl({
+      name: 'Saint Louis',
+      description: 'Roi de France',
+      id: 'Q346',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Premier_sceau_de_majesté_de_Louis_IX_détouré.png',
+      thumbnail: 'https://commons.wikimedia.org/w/thumb.php?width=320&f=Premier_sceau_de_majesté_de_Louis_IX_détouré.png',
+    }, Validators.required)
   });
 
   options: WikidataEntityOption[] = [
@@ -30,7 +54,7 @@ export class HomeComponent implements OnInit {
     private sparql: SparqlService) { }
 
   ngOnInit() {
-    // this.updateFilter(this.f.value.name);
+    this.updateFilter(this.f.value.name);
 
     this.f.valueChanges.pipe(debounceTime(600)).subscribe(val => {
       console.log('val', val);
@@ -51,38 +75,38 @@ export class HomeComponent implements OnInit {
     const pattern = entity.name;
     console.log('pattern', pattern);
     this.sparql.query(`
-    SELECT ?h ?hLabel ?hDescription ?nationalityLabel
-    WHERE {
-      {
-        SELECT DISTINCT ?h ?label ?nationality WHERE {
-          VALUES ?nationality { wd:Q70972 wd:Q142  }
-          ?h wdt:P31 wd:Q5.
-          ?h wdt:P27 ?nationality.
-          ?h wdt:P569 ?dob.
-          ?h rdfs:label ?label.
-          ?h wdt:P97 ?titreNoblesse.
-          FILTER(CONTAINS(LCASE(?label), LCASE("${pattern}"))).
-          FILTER(LANG(?label) = "fr").
-          FILTER(?dob < "1850-01-01"^^xsd:dateTime).
-        }
-        LIMIT 7
-      }
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+SELECT ?h ?hLabel ?hDescription ?nationalityLabel ?image
+WHERE {
+  {
+    SELECT DISTINCT ?h ?label ?nationality ?image WHERE {
+      VALUES ?nationality { wd:Q70972 wd:Q142  }
+      ?h wdt:P31 wd:Q5.
+      ?h wdt:P27 ?nationality.
+      ?h wdt:P569 ?dob.
+      ?h rdfs:label ?label.
+      ?h wdt:P97 ?titreNoblesse.
+      ?h wdt:P18 ?image.
+      FILTER(CONTAINS(LCASE(?label), LCASE("${pattern}"))).
+      FILTER(LANG(?label) = "fr").
+      FILTER(?dob < "1950-01-01"^^xsd:dateTime).
     }
-    ORDER BY ?hLabel
+    LIMIT 7
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+}
+ORDER BY ?hLabel
 `).subscribe(obj => {
       console.log('obj', obj);
       this.options = obj.results.bindings.map(result => {
-        if (!result.hDescription) {
-          return {
-            name: result.hLabel.value,
-            description: '<aucune description>',
-          };
-        }
+        const description = result.hDescription ? result.hDescription.value : '<aucune description>';
         return {
           name: result.hLabel.value,
-          description: result.hDescription.value,
+          description,
+          id: getEntityId(result.h.value),
+          image: getImageUrl(result.image.value),
+          thumbnail: getThumbnailUrl(result.image.value),
         };
+
       });
     });
   }

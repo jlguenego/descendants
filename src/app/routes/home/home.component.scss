@@ -38,3 +38,16 @@ span.option {
         text-overflow: ellipsis;
     }
 }
+
+.illustration {
+    border: 1px solid #ddd;
+    width: 10em;
+    margin: 1em auto;
+    text-align: center;
+    padding: 1em;
+    height: 10em;
+    img {
+        height: 100%;
+    }
+
+}

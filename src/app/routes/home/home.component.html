@@ -2,6 +2,10 @@
   <h1>Choisis un personnage historique</h1>
   <!-- <app-photo-picker [list]="list"></app-photo-picker> -->
 
+  <div class="illustration">
+    <img *ngIf="f.value.name.thumbnail" [src]="f.value.name.thumbnail" [alt]="f.value.name.name">
+  </div>
+
   <form [formGroup]="f" (ngSubmit)="submit()">
     <div class="name">
       <mat-form-field>
@@ -24,4 +28,4 @@
   </mat-option>
 </mat-autocomplete>
 
-{{f.value | json}}
+<!-- {{f.value | json}} -->
