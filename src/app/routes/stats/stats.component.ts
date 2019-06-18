@@ -8,8 +8,8 @@ import { EntityService } from 'src/app/entity.service';
 })
 export class StatsComponent implements OnInit {
   name = 'Saint-Louis';
-  descendantCount = 0;
-  survivors = 102;
+  deadCount = 0;
+  aliveCount = 0;
   current: any = {};
   constructor(private entity: EntityService) { }
 
@@ -20,7 +20,13 @@ export class StatsComponent implements OnInit {
     this.entity.get(this.entity.getCurrent()).subscribe(entity => {
       console.log('entity', entity);
       this.current = entity;
-      this.descendantCount = entity.results.bindings[0].descendantCount.value;
+      if (entity.results.bindings.length === 0) {
+        return;
+      }
+      const dead = entity.results.bindings.find(row => row.dead.value === 'true');
+      const alive = entity.results.bindings.find(row => row.dead.value === 'false');
+      this.deadCount = +dead.descendantCount.value;
+      this.aliveCount = +alive.descendantCount.value;
     });
   }
 

@@ -1,10 +1,10 @@
 <section>
   <h1>Statistiques sur {{name}}</h1>
   <h2>Nombres de descendants</h2>
-  <p>{{name}} à <span class="total">{{descendantCount}}</span> descendants,
+  <p>{{name}} à <span class="total">{{deadCount + aliveCount}}</span> descendants,
   </p>
   <p>
-    dont <span class="total">{{survivors}}</span> actuellement en vie.
+    dont <span class="total">{{aliveCount}}</span> actuellement en vie.
   </p>
 
   {{ current | json }}

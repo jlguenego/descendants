@@ -12,6 +12,8 @@ const isWikiDataEntity = (control: AbstractControl): ValidationErrors => {
   return null;
 };
 
+const getVal = (name: string | WikidataEntityOption) => (typeof name === 'string') ? name : name.name;
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -32,11 +34,13 @@ export class HomeComponent implements OnInit {
   });
 
   options: WikidataEntityOption[];
+  filteredOptions: WikidataEntityOption[];
+
   constructor(
     private router: Router,
     private filterPeople: FilterPeopleService,
     private entity: EntityService
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.updateFilter(this.f.value.name);
@@ -46,8 +50,17 @@ export class HomeComponent implements OnInit {
       this.updateFilter({ name: this.f.value.name });
       if (this.f.valid) {
         console.log('this.f.value.name.id', this.f.value.name.id);
-        this.entity.get(this.f.value.name.id).subscribe(json => {});
+        this.entity.get(this.f.value.name.id).subscribe(json => { });
       }
+    });
+
+    this.f.valueChanges.subscribe(val => {
+      console.log('val2', val);
+      const name = getVal(val);
+      console.log('name', name);
+      this.filteredOptions = this.options.filter(o => o.name.includes(name));
+      console.log('this.options', this.options);
+      console.log('this.filteredOptions', this.filteredOptions);
     });
   }
 
@@ -64,7 +77,16 @@ export class HomeComponent implements OnInit {
     console.log('updateFilter start with entity:', entity);
     const pattern = entity.name;
     console.log('pattern', pattern);
-    this.filterPeople.filter(pattern).subscribe(options => this.options = options);
+    this.filterPeople.filter(pattern).subscribe(options => {
+      this.options = options;
+      console.log('this.f.value.name', this.f.value.name);
+      const name = getVal(this.f.value.name);
+      console.log('name', name);
+      this.filteredOptions = this.options.filter(o => o.name.includes(name));
+      console.log('this.options', this.options);
+      console.log('this.filteredOptions', this.filteredOptions);
+    });
+
   }
 
   getYear(dateStr: string) {

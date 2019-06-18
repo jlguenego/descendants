@@ -46,14 +46,16 @@ export class EntityService {
     }
     console.log('get id', id);
     return this.sparql.query(`
-    SELECT ?item ?itemLabel (COUNT(?descendant) AS ?descendantCount)
+    SELECT ?item ?itemLabel ?dead (COUNT(DISTINCT ?descendant) AS ?descendantCount)
     WHERE
     {
       VALUES ?item { wd:${id}  }
-      ?item wdt:P40+ ?descendant
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+      ?item wdt:P40+ ?descendant.
+      OPTIONAL { ?descendant wdt:P570 ?dod }
+      BIND(BOUND(?dod) AS ?dead).
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
     }
-    GROUP BY ?item ?itemLabel
+    GROUP BY ?item ?itemLabel ?dead
     `).pipe(map(json => {
       console.log('json', json);
       this.cache[id] = json;
