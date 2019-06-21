@@ -7,7 +7,7 @@ import { EntityService } from 'src/app/entity.service';
   styleUrls: ['./stats.component.scss']
 })
 export class StatsComponent implements OnInit {
-  name = 'Saint-Louis';
+  name = 'xxx';
   deadCount = 0;
   aliveCount = 0;
   current: any = {};
@@ -19,6 +19,7 @@ export class StatsComponent implements OnInit {
     }
     this.entity.get(this.entity.getCurrent()).subscribe(entity => {
       console.log('entity', entity);
+      this.name = entity.results.bindings[0].itemLabel.value;
       this.current = entity;
       if (entity.results.bindings.length === 0) {
         return;
