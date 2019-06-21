@@ -8,7 +8,7 @@ import { AncestorsComponent } from './routes/ancestors/ancestors.component';
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'legal', component: LegalComponent },
-  { path: 'stats', component: StatsComponent },
+  { path: 'stats/:id', component: StatsComponent },
   { path: 'ancestors', component: AncestorsComponent },
 ];
 

@@ -66,7 +66,7 @@ export class HomeComponent implements OnInit {
 
   submit() {
     this.entity.setCurrent(this.f.value.name.id);
-    this.router.navigateByUrl('/stats');
+    this.router.navigateByUrl(`/stats/${this.f.value.name.id}`);
   }
 
   displayFn(option: WikidataEntityOption): string {
