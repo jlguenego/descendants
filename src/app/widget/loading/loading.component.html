@@ -1,4 +1,4 @@
-<section [class]="ready">
+<section [ngClass]="{'ready': ready.isReady}">
   <mat-progress-spinner mode="indeterminate">
   </mat-progress-spinner>
 </section>

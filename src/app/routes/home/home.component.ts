@@ -14,6 +14,12 @@ const isWikiDataEntity = (control: AbstractControl): ValidationErrors => {
 
 const getVal = (name: string | WikidataEntityOption) => (typeof name === 'string') ? name : name.name;
 
+const filterOptions = (options, val) => {
+  const name = getVal(val);
+  const result = options.filter(o => o.name.toLowerCase().includes(name.toLowerCase()));
+  return result;
+};
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -55,12 +61,7 @@ export class HomeComponent implements OnInit {
     });
 
     this.f.valueChanges.subscribe(val => {
-      console.log('val2', val);
-      const name = getVal(val);
-      console.log('name', name);
-      this.filteredOptions = this.options.filter(o => o.name.includes(name));
-      console.log('this.options', this.options);
-      console.log('this.filteredOptions', this.filteredOptions);
+      this.filteredOptions = filterOptions(this.options, val);
     });
   }
 
@@ -79,12 +80,7 @@ export class HomeComponent implements OnInit {
     console.log('pattern', pattern);
     this.filterPeople.filter(pattern).subscribe(options => {
       this.options = options;
-      console.log('this.f.value.name', this.f.value.name);
-      const name = getVal(this.f.value.name);
-      console.log('name', name);
-      this.filteredOptions = this.options.filter(o => o.name.includes(name));
-      console.log('this.options', this.options);
-      console.log('this.filteredOptions', this.filteredOptions);
+      this.filteredOptions = filterOptions(this.options, this.f.value.name);
     });
 
   }
