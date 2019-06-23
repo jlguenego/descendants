@@ -1,19 +1,25 @@
 import { NgModule } from '@angular/core';
-import { MatButtonModule, MatFormFieldModule, MatAutocompleteModule, MatInputModule } from '@angular/material';
+import {
+  MatButtonModule,
+  MatFormFieldModule,
+  MatAutocompleteModule,
+  MatInputModule,
+  MatIconModule,
+  MatProgressSpinnerModule
+} from '@angular/material';
+
+const imports = [
+  MatButtonModule,
+  MatFormFieldModule,
+  MatAutocompleteModule,
+  MatInputModule,
+  MatIconModule,
+  MatProgressSpinnerModule,
+];
 
 @NgModule({
   declarations: [],
-  imports: [
-    MatButtonModule,
-    MatFormFieldModule,
-    MatAutocompleteModule,
-    MatInputModule,
-  ],
-  exports: [
-    MatButtonModule,
-    MatFormFieldModule,
-    MatAutocompleteModule,
-    MatInputModule,
-  ]
+  imports,
+  exports: imports
 })
 export class MaterialModule { }
